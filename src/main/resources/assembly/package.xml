@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assembly>
+
+  <id>${version}</id>
+  <formats>
+    <format>tar.gz</format>
+  </formats>
+
+  <baseDirectory>cs_node</baseDirectory>
+  <includeBaseDirectory>true</includeBaseDirectory>
+
+  <fileSets>
+    <fileSet>
+      <directory>target/appassembler/bin</directory>
+      <outputDirectory>bin</outputDirectory>
+      <includes>
+        <include>start.sh</include>
+      </includes>
+    </fileSet>
+
+    <fileSet>
+      <directory>src/cmd</directory>
+      <outputDirectory>bin</outputDirectory>
+      <includes>
+        <include>stop.sh</include>
+      </includes>
+      <filtered>true</filtered>
+      <fileMode>755</fileMode>
+    </fileSet>
+
+    <fileSet>
+      <directory>target/appassembler/conf</directory>
+      <outputDirectory>conf</outputDirectory>
+      <includes>
+        <include>application.properties</include>
+        <include>config.toml</include>
+        <include>conf/*</include>
+      </includes>
+    </fileSet>
+
+    <fileSet>
+      <directory>target/appassembler/lib</directory>
+      <outputDirectory>lib</outputDirectory>
+    </fileSet>
+  </fileSets>
+</assembly>
