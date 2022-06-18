@@ -79,7 +79,7 @@
           <encoding>UTF-8</encoding>
           <programs>
             <program>
-              <mainClass>com.ancun.chain_storage.cs_client.CsClientApplication</mainClass>
+              <mainClass>com.ancun.chain_storage.client.CsClientApplication</mainClass>
               <id>start</id>
               <jvmSettings>
                 <extraArguments>

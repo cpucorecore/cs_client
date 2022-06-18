@@ -23,7 +23,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
-public class CsClientApplication {
+public class CsClientApplication implements CommandLineRunner {
   private static Logger logger = LoggerFactory.getLogger(CsClientApplication.class);
 
   @Value("${ConfigFilePath}")
@@ -47,36 +47,34 @@ public class CsClientApplication {
     SpringApplication.run(CsClientApplication.class, args);
   }
 
-  @Bean
-  public CommandLineRunner commandLineRunner(ApplicationContext c) {
-    return args -> {
-      ConfigOption configOption = Config.load(configFilePath, SM_TYPE);
-      BcosSDK bcosSDK = new BcosSDK(configOption);
-      Client client = bcosSDK.getClient(groupId);
+  @Override
+  public void run(String... args) throws Exception {
+    ConfigOption configOption = Config.load(configFilePath, SM_TYPE);
+    BcosSDK bcosSDK = new BcosSDK(configOption);
+    Client client = bcosSDK.getClient(groupId);
 
-      UserStorage userStorage =
-          UserStorage.load(userStorageAddress, client, client.getCryptoSuite().getCryptoKeyPair());
+    UserStorage userStorage =
+            UserStorage.load(userStorageAddress, client, client.getCryptoSuite().getCryptoKeyPair());
 
-      CryptoSuite cryptoSuite = client.getCryptoSuite();
+    CryptoSuite cryptoSuite = client.getCryptoSuite();
 
-      Set<String> userAddresses = new HashSet<>();
-      for (int i = 0; i < 1000; i++) {
-        CryptoKeyPair keyPair = cryptoSuite.createKeyPair();
-        ChainStorage chainStorage = ChainStorage.load(chainStorageAddress, client, keyPair);
+    Set<String> userAddresses = new HashSet<>();
+    for (int i = 0; i < 100; i++) {
+      CryptoKeyPair keyPair = cryptoSuite.createKeyPair();
+      ChainStorage chainStorage = ChainStorage.load(chainStorageAddress, client, keyPair);
 
-        if (!userStorage.exist(keyPair.getAddress())) {
-          chainStorage.userRegister(ext);
-          userAddresses.add(keyPair.getAddress());
-        }
-
-        for (int j = 0; j < 1000; j++) {
-          String mockCid = keyPair.getAddress() + j;
-          chainStorage.userAddFile(mockCid, BigInteger.valueOf(3600), mockCid, userAddFileCallback);
-        }
-        logger.info("----i={}----", i);
+      if (!userStorage.exist(keyPair.getAddress())) {
+        chainStorage.userRegister(ext);
+        userAddresses.add(keyPair.getAddress());
       }
 
-      logger.info(userAddresses.toString());
-    };
+      for (int j = 1; j <= 1000; j++) {
+        String mockCid = String.format("%s:%04d", keyPair.getAddress(), j);
+        chainStorage.userAddFile(mockCid, BigInteger.valueOf(3600), mockCid, userAddFileCallback);
+      }
+      logger.info("----i={}----", i);
+    }
+
+    logger.info(userAddresses.toString());
   }
 }
