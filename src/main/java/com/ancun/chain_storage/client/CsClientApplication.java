@@ -19,8 +19,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 public class CsClientApplication implements CommandLineRunner {
@@ -49,17 +47,27 @@ public class CsClientApplication implements CommandLineRunner {
 
   @Override
   public void run(String... args) throws Exception {
+    int userCount = 1;
+    int userFileCount = 10;
+
+    if (1 == args.length) {
+      userCount = Integer.valueOf(args[0]);
+    } else if (2 == args.length) {
+      userCount = Integer.valueOf(args[0]);
+      userFileCount = Integer.valueOf(args[1]);
+    }
+
     ConfigOption configOption = Config.load(configFilePath, SM_TYPE);
     BcosSDK bcosSDK = new BcosSDK(configOption);
     Client client = bcosSDK.getClient(groupId);
 
     UserStorage userStorage =
-            UserStorage.load(userStorageAddress, client, client.getCryptoSuite().getCryptoKeyPair());
+        UserStorage.load(userStorageAddress, client, client.getCryptoSuite().getCryptoKeyPair());
 
     CryptoSuite cryptoSuite = client.getCryptoSuite();
 
     Set<String> userAddresses = new HashSet<>();
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < userCount; i++) {
       CryptoKeyPair keyPair = cryptoSuite.createKeyPair();
       ChainStorage chainStorage = ChainStorage.load(chainStorageAddress, client, keyPair);
 
@@ -68,11 +76,11 @@ public class CsClientApplication implements CommandLineRunner {
         userAddresses.add(keyPair.getAddress());
       }
 
-      for (int j = 1; j <= 1000; j++) {
-        String mockCid = String.format("%s:%04d", keyPair.getAddress(), j);
+      for (int j = 1; j <= userFileCount; j++) {
+        String mockCid = String.format("%s:%06d", keyPair.getAddress(), j);
         chainStorage.userAddFile(mockCid, BigInteger.valueOf(3600), mockCid, userAddFileCallback);
       }
-      logger.info("----i={}----", i);
+      logger.info("user {} finish add {} files", keyPair.getAddress(), userFileCount);
     }
 
     logger.info(userAddresses.toString());
