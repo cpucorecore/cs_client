@@ -6,7 +6,7 @@
     <format>tar.gz</format>
   </formats>
 
-  <baseDirectory>cs_node</baseDirectory>
+  <baseDirectory>cs_client</baseDirectory>
   <includeBaseDirectory>true</includeBaseDirectory>
 
   <fileSets>
@@ -34,7 +34,7 @@
       <includes>
         <include>application.properties</include>
         <include>config.toml</include>
-        <include>conf/*</include>
+        <include>conf/gm</include>
       </includes>
     </fileSet>
 

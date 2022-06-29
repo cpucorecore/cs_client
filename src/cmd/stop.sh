@@ -1,4 +1,4 @@
-pid=`ps -ef|grep java |grep CsNodeApplication | awk '{print $2}'`
+pid=`ps -ef|grep java |grep CsClientApplication | awk '{print $2}'`
 if [ -z ${pid} ];
 then
   echo not started
